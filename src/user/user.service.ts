@@ -19,4 +19,8 @@ export class UserService {
   findByName(name: string): Promise<User | null> {
     return this.userRepository.findOne({ where: { name } });
   }
+
+  findById(id: string): Promise<User | null> {
+    return this.userRepository.findOne(id);
+  }
 }
