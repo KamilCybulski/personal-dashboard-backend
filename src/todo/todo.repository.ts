@@ -3,7 +3,7 @@ import { EntityRepository, Repository } from 'typeorm';
 import { Todo } from './todo.entity';
 import { CreateTodoDTO } from './dto/create-todo.dto';
 import { TodoStatus } from './types';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { User } from 'src/user/user.entity';
 
 @EntityRepository(Todo)
@@ -21,11 +21,15 @@ export class TodoRepository extends Repository<Todo> {
     return todo;
   }
 
-  async updateTodoStatus(id: number, status: TodoStatus): Promise<Todo> {
-    const todo = await this.findOne(id);
+  async updateTodoStatus(id: number, status: TodoStatus, user: User): Promise<Todo> {
+    const todo = await this.findOne(id, { relations: ['user'] });
 
     if (!todo) {
       throw new NotFoundException();
+    }
+
+    if (todo.user.id !== user.id) {
+      throw new UnauthorizedException();
     }
 
     todo.status = status;

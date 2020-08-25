@@ -64,7 +64,8 @@ export class TodoController {
   updateStatus(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateTodoStatusDTO,
+    @GetUser() user: User,
   ): Promise<TodoDTO> {
-    return this.todoService.updateStatus(id, dto.status);
+    return this.todoService.updateStatus(id, dto.status, user);
   }
 }
