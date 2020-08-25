@@ -4,10 +4,12 @@ import {
   Column,
   Entity,
   Unique,
+  OneToMany,
 } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 
 import { UserDTO } from './dto';
+import { Todo } from 'src/todo/todo.entity';
 
 @Entity()
 @Unique(['name'])
@@ -23,6 +25,13 @@ export class User extends BaseEntity {
 
   @Column()
   salt: string;
+
+  @OneToMany(
+    type => Todo,
+    todo => todo.user,
+    { eager: true },
+  )
+  todos: Todo[];
 
   toDTO(): UserDTO {
     return {

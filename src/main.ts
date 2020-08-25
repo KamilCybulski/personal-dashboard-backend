@@ -5,7 +5,7 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors({ credentials: true, origin: process.env.FRONTEND_BASE_URL })
+  app.enableCors({ credentials: true, origin: process.env.FRONTEND_BASE_URL });
 
   const swaggerOptions = new DocumentBuilder()
     .setTitle('Personal Dashboard backend')
@@ -13,6 +13,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('Auth')
     .addTag('User')
+    .addTag('Todo')
     .addBearerAuth()
     .build();
 
