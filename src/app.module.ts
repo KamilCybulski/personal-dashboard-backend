@@ -8,7 +8,12 @@ import { UserModule } from './user/user.module';
 import { TodoModule } from './todo/todo.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(ormConfig), AuthModule, UserModule, TodoModule],
+  imports: [
+    TypeOrmModule.forRoot(ormConfig),
+    AuthModule,
+    UserModule,
+    TodoModule,
+  ],
   controllers: [],
   providers: [AppService],
 })

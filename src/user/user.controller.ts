@@ -8,7 +8,6 @@ import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 @Controller('user')
 @UseGuards(AuthGuard())
 export class UserController {
-
   @ApiBearerAuth()
   @ApiResponse({ status: 200, type: UserDTO })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -16,5 +15,4 @@ export class UserController {
   getMe(@GetUser() user: UserDTO): UserDTO {
     return user;
   }
-
 }
