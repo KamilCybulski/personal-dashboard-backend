@@ -20,6 +20,7 @@ docker-compose up
 ```
 
 Api will be available at http://localhost:3000
+You can find api documentation at http://localhost:3000/docs
 
 If at any point you need to install additional libraries, run
 ```bash
