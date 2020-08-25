@@ -35,7 +35,10 @@ export class TodoController {
   @ApiBearerAuth()
   @ApiResponse({ status: 200, type: TodoDTO })
   @Get('/:id')
-  getById(@Param('id', ParseIntPipe) id: number, @GetUser() user: User): Promise<TodoDTO> {
+  getById(
+    @Param('id', ParseIntPipe) id: number,
+    @GetUser() user: User,
+  ): Promise<TodoDTO> {
     return this.todoService.getById(id, user);
   }
 
@@ -43,17 +46,17 @@ export class TodoController {
   @ApiBody({ type: CreateTodoDTO })
   @ApiResponse({ status: 201, type: TodoDTO })
   @Post()
-  create(
-    @Body() body: CreateTodoDTO,
-    @GetUser() user: User,
-    ): Promise<TodoDTO> {
+  create(@Body() body: CreateTodoDTO, @GetUser() user: User): Promise<TodoDTO> {
     return this.todoService.createTodo(body, user);
   }
 
   @ApiBearerAuth()
   @ApiResponse({ status: 200, description: 'Sucessfully deleted task' })
   @Delete('/:id')
-  delete(@Param('id', ParseIntPipe) id: number, @GetUser() user: User): Promise<void> {
+  delete(
+    @Param('id', ParseIntPipe) id: number,
+    @GetUser() user: User,
+  ): Promise<void> {
     return this.todoService.deleteTodo(id, user);
   }
 

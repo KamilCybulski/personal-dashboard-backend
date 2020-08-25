@@ -25,9 +25,13 @@ export class User extends BaseEntity {
 
   @Column()
   salt: string;
-  
-  @OneToMany(type => Todo, todo => todo.user, { eager: true })
-  todos: Todo[]
+
+  @OneToMany(
+    type => Todo,
+    todo => todo.user,
+    { eager: true },
+  )
+  todos: Todo[];
 
   toDTO(): UserDTO {
     return {

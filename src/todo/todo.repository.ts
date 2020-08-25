@@ -35,7 +35,11 @@ export class TodoRepository extends Repository<Todo> {
     return todo;
   }
 
-  async updateTodoStatus(id: number, status: TodoStatus, user: User): Promise<Todo> {
+  async updateTodoStatus(
+    id: number,
+    status: TodoStatus,
+    user: User,
+  ): Promise<Todo> {
     const todo = await this.findOne(id, { relations: ['user'] });
 
     if (!todo) {

@@ -36,8 +36,16 @@ export class TodoService {
     }
   }
 
-  async updateStatus(id: number, status: TodoStatus, user: User): Promise<TodoDTO> {
-    const updatedTodo = await this.todoRepository.updateTodoStatus(id, status, user);
+  async updateStatus(
+    id: number,
+    status: TodoStatus,
+    user: User,
+  ): Promise<TodoDTO> {
+    const updatedTodo = await this.todoRepository.updateTodoStatus(
+      id,
+      status,
+      user,
+    );
     return updatedTodo.toDTO();
   }
 }

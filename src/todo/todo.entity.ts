@@ -32,7 +32,11 @@ export class Todo extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(type => User, user => user.todos, { eager: false })
+  @ManyToOne(
+    type => User,
+    user => user.todos,
+    { eager: false },
+  )
   user: User;
 
   toDTO(): TodoDTO {
