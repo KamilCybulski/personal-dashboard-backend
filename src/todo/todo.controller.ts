@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Post, Body, Delete } from '@nestjs/common';
 import { ApiTags, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 
 import { TodoService } from './todo.service';
@@ -23,5 +23,12 @@ export class TodoController {
   @Post()
   create(@Body() body: CreateTodoDTO): Promise<TodoDTO> {
     return this.todoService.createTodo(body);
+  }
+
+  @ApiBearerAuth()
+  @ApiResponse({ status: 200, description: 'Sucessfully deleted task' })
+  @Delete('/:id')
+  delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.todoService.deleteTodo(id);
   }
 }
