@@ -53,8 +53,8 @@ export class TodoController {
   @ApiBearerAuth()
   @ApiResponse({ status: 200, description: 'Sucessfully deleted task' })
   @Delete('/:id')
-  delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.todoService.deleteTodo(id);
+  delete(@Param('id', ParseIntPipe) id: number, @GetUser() user: User): Promise<void> {
+    return this.todoService.deleteTodo(id, user);
   }
 
   @ApiBearerAuth()
