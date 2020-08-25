@@ -13,6 +13,10 @@ export class TodoService {
     private readonly todoRepository: TodoRepository,
   ) {}
 
+  getAll(): Promise<TodoDTO[]> {
+    return this.todoRepository.find();
+  }
+
   async getById(id: number): Promise<TodoDTO> {
     const todo = await this.todoRepository.findOne(id);
 

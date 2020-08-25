@@ -21,6 +21,13 @@ export class TodoController {
   constructor(private readonly todoService: TodoService) {}
 
   @ApiBearerAuth()
+  @ApiResponse({ status: 200, type: [TodoDTO] })
+  @Get()
+  getAll(): Promise<TodoDTO[]> {
+    return this.todoService.getAll();
+  }
+
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, type: TodoDTO })
   @Get('/:id')
   getById(@Param('id', ParseIntPipe) id: number): Promise<TodoDTO> {
