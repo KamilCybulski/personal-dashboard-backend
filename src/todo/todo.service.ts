@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TodoRepository } from './todo.repository';
 import { TodoDTO } from './dto';
 import { CreateTodoDTO } from './dto/create-todo.dto';
+import { TodoStatus } from './types';
 
 @Injectable()
 export class TodoService {
@@ -32,6 +33,11 @@ export class TodoService {
 
     if (affected === 0) {
       throw new NotFoundException();
-    };
+    }
+  }
+
+  async updateStatus(id: number, status: TodoStatus): Promise<TodoDTO> {
+    const updatedTodo = await this.todoRepository.updateTodoStatus(id, status);
+    return updatedTodo.toDTO();
   }
 }
