@@ -35,8 +35,8 @@ export class TodoController {
   @ApiBearerAuth()
   @ApiResponse({ status: 200, type: TodoDTO })
   @Get('/:id')
-  getById(@Param('id', ParseIntPipe) id: number): Promise<TodoDTO> {
-    return this.todoService.getById(id);
+  getById(@Param('id', ParseIntPipe) id: number, @GetUser() user: User): Promise<TodoDTO> {
+    return this.todoService.getById(id, user);
   }
 
   @ApiBearerAuth()

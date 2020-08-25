@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TodoRepository } from './todo.repository';
@@ -18,11 +18,15 @@ export class TodoService {
     return this.todoRepository.find({ where: { user: user.id } });
   }
 
-  async getById(id: number): Promise<TodoDTO> {
-    const todo = await this.todoRepository.findOne(id);
+  async getById(id: number, user: User): Promise<TodoDTO> {
+    const todo = await this.todoRepository.findOne(id, { relations: ['user'] });
 
     if (!todo) {
       throw new NotFoundException();
+    }
+
+    if (todo.user.id !== user.id) {
+      throw new UnauthorizedException();
     }
 
     return todo.toDTO();
