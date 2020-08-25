@@ -3,6 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from './decorators/get-user.decorator';
 import { UserDTO } from './dto';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { User } from './user.entity';
 
 @ApiTags('User')
 @Controller('user')
@@ -12,7 +13,7 @@ export class UserController {
   @ApiResponse({ status: 200, type: UserDTO })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Get('/me')
-  getMe(@GetUser() user: UserDTO): UserDTO {
-    return user;
+  getMe(@GetUser() user: User): UserDTO {
+    return user.toDTO();
   }
 }

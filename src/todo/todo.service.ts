@@ -5,6 +5,7 @@ import { TodoRepository } from './todo.repository';
 import { TodoDTO } from './dto';
 import { CreateTodoDTO } from './dto/create-todo.dto';
 import { TodoStatus } from './types';
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class TodoService {
@@ -13,8 +14,8 @@ export class TodoService {
     private readonly todoRepository: TodoRepository,
   ) {}
 
-  getAll(): Promise<TodoDTO[]> {
-    return this.todoRepository.find();
+  getAll(user: User): Promise<TodoDTO[]> {
+    return this.todoRepository.find({ where: { user: user.id } });
   }
 
   async getById(id: number): Promise<TodoDTO> {
@@ -27,8 +28,8 @@ export class TodoService {
     return todo.toDTO();
   }
 
-  async createTodo(dto: CreateTodoDTO): Promise<TodoDTO> {
-    const todo = await this.todoRepository.createTodo(dto);
+  async createTodo(dto: CreateTodoDTO, user: User): Promise<TodoDTO> {
+    const todo = await this.todoRepository.createTodo(dto, user);
     return todo.toDTO();
   }
 

@@ -7,6 +7,7 @@ import {
   Body,
   Delete,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 
@@ -14,8 +15,12 @@ import { TodoService } from './todo.service';
 import { TodoDTO } from './dto';
 import { CreateTodoDTO } from './dto/create-todo.dto';
 import { UpdateTodoStatusDTO } from './dto/update-todo-status.dto';
+import { GetUser } from 'src/user/decorators/get-user.decorator';
+import { User } from 'src/user/user.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Todo')
+@UseGuards(AuthGuard())
 @Controller('todo')
 export class TodoController {
   constructor(private readonly todoService: TodoService) {}
@@ -23,8 +28,8 @@ export class TodoController {
   @ApiBearerAuth()
   @ApiResponse({ status: 200, type: [TodoDTO] })
   @Get()
-  getAll(): Promise<TodoDTO[]> {
-    return this.todoService.getAll();
+  getAll(@GetUser() user: User): Promise<TodoDTO[]> {
+    return this.todoService.getAll(user);
   }
 
   @ApiBearerAuth()
@@ -38,8 +43,11 @@ export class TodoController {
   @ApiBody({ type: CreateTodoDTO })
   @ApiResponse({ status: 201, type: TodoDTO })
   @Post()
-  create(@Body() body: CreateTodoDTO): Promise<TodoDTO> {
-    return this.todoService.createTodo(body);
+  create(
+    @Body() body: CreateTodoDTO,
+    @GetUser() user: User,
+    ): Promise<TodoDTO> {
+    return this.todoService.createTodo(body, user);
   }
 
   @ApiBearerAuth()

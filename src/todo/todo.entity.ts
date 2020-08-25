@@ -5,10 +5,12 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 
 import { TodoStatus } from './types';
 import { TodoDTO } from './dto';
+import { User } from 'src/user/user.entity';
 
 @Entity()
 export class Todo extends BaseEntity {
@@ -29,6 +31,9 @@ export class Todo extends BaseEntity {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToOne(type => User, user => user.todos, { eager: false })
+  user: User;
 
   toDTO(): TodoDTO {
     return {

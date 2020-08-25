@@ -5,7 +5,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { jwtConfig } from 'src/config/jwtconfig';
 import { UserService } from 'src/user/user.service';
 import { JwtPayload } from '../types';
-import { UserDTO } from 'src/user/dto';
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -17,14 +17,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: JwtPayload): Promise<UserDTO> {
+  async validate(payload: JwtPayload): Promise<User> {
     const { id } = payload;
     const user = await this.userService.findById(id);
 
     if (!user) {
       throw new UnauthorizedException();
     } else {
-      return user.toDTO();
+      return user;
     }
   }
 }
