@@ -21,6 +21,20 @@ export class TodoRepository extends Repository<Todo> {
     return todo;
   }
 
+  async getTodoById(id: number, user: User): Promise<Todo> {
+    const todo = await this.findOne(id, { relations: ['user'] });
+
+    if (!todo) {
+      throw new NotFoundException();
+    }
+
+    if (todo.user.id !== user.id) {
+      throw new UnauthorizedException();
+    }
+
+    return todo;
+  }
+
   async updateTodoStatus(id: number, status: TodoStatus, user: User): Promise<Todo> {
     const todo = await this.findOne(id, { relations: ['user'] });
 
