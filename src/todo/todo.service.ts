@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TodoRepository } from './todo.repository';
@@ -14,8 +14,9 @@ export class TodoService {
     private readonly todoRepository: TodoRepository,
   ) {}
 
-  getAll(user: User): Promise<TodoDTO[]> {
-    return this.todoRepository.find({ where: { user: user.id } });
+  async getAll(user: User): Promise<TodoDTO[]> {
+    const todos = await this.todoRepository.getAllTodos(user);
+    return todos.sort((first, second) => first.position - second.position).map(todo => todo.toDTO());
   }
 
   async getById(id: number, user: User): Promise<TodoDTO> {
@@ -28,12 +29,8 @@ export class TodoService {
     return todo.toDTO();
   }
 
-  async deleteTodo(id: number, user: User): Promise<void> {
-    const { affected } = await this.todoRepository.delete({ id, user: user });
-
-    if (affected === 0) {
-      throw new NotFoundException();
-    }
+  deleteTodo(id: number, user: User): Promise<void> {
+    return this.todoRepository.deleteTodo(id, user);
   }
 
   async updateStatus(
@@ -44,6 +41,19 @@ export class TodoService {
     const updatedTodo = await this.todoRepository.updateTodoStatus(
       id,
       status,
+      user,
+    );
+    return updatedTodo.toDTO();
+  }
+
+  async updatePosition(
+    id: number,
+    newPosition: number,
+    user: User,
+  ): Promise<TodoDTO> {
+    const updatedTodo = await this.todoRepository.updateTodoPosition(
+      id,
+      newPosition,
       user,
     );
     return updatedTodo.toDTO();

@@ -15,7 +15,7 @@ import { Todo } from 'src/todo/todo.entity';
 @Unique(['name'])
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column()
   name: string;

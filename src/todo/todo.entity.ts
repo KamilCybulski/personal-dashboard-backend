@@ -32,12 +32,18 @@ export class Todo extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @Column()
+  position: number;
+
   @ManyToOne(
     type => User,
     user => user.todos,
     { eager: false },
   )
   user: User;
+
+  @Column()
+  userId: number;
 
   toDTO(): TodoDTO {
     return {
@@ -47,6 +53,7 @@ export class Todo extends BaseEntity {
       status: this.status,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
+      position: this.position,
     };
   }
 }
