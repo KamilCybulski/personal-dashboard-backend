@@ -31,6 +31,9 @@ export class Todo extends BaseEntity {
 
   @UpdateDateColumn()
   updatedAt: Date;
+  
+  @Column()
+  position: number;
 
   @ManyToOne(
     type => User,

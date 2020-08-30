@@ -21,6 +21,10 @@ export class TodoRepository extends Repository<Todo> {
     return todo;
   }
 
+  getAllTodos(user: User): Promise<Todo[]> {
+    return this.find({ where: { user: user.id } })
+  }
+
   async getTodoById(id: number, user: User): Promise<Todo> {
     const todo = await this.findOne(id, { relations: ['user'] });
 
@@ -53,5 +57,13 @@ export class TodoRepository extends Repository<Todo> {
     todo.status = status;
     todo.save();
     return todo;
+  }
+
+  async deleteTodo(id: number, user: User): Promise<void> {
+    const { affected } = await this.delete({ id, user });
+
+    if (affected === 0) {
+      throw new NotFoundException();
+    }
   }
 }
