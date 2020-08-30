@@ -153,6 +153,11 @@ export class TodoRepository extends Repository<Todo> {
 
   async deleteTodo(id: number, user: User): Promise<void> {
     const todo = await this.findOne(id);
+
+    if (todo.userId !== user.id) {
+      throw new UnauthorizedException();
+    }
+
     await this.remove([todo]);
     await this.decreaseConsecutivePositions(todo.position, user);
   }
