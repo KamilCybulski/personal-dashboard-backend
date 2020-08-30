@@ -17,6 +17,15 @@ export class TodoRepository extends Repository<Todo> {
         .reduce((acc, current) => current > acc ? current : acc) + 1;
   }
 
+  private async updateConsecutivePositions(startFrom: number, user: User): Promise<void> {
+    await this.createQueryBuilder().update().set({
+      position: () => "position - 1",
+    })
+    .where('userId = :id', { id: user.id })
+    .where('position > :startFrom', { startFrom })
+    .execute()
+  }
+
   async createTodo(dto: CreateTodoDTO, user: User): Promise<Todo> {
     const { name, notes } = dto;
     const position = await this.findNextPosition(user);
@@ -71,10 +80,8 @@ export class TodoRepository extends Repository<Todo> {
   }
 
   async deleteTodo(id: number, user: User): Promise<void> {
-    const { affected } = await this.delete({ id, user });
-
-    if (affected === 0) {
-      throw new NotFoundException();
-    }
+    const todo = await this.findOne(id);
+    await this.remove([todo]);
+    await this.updateConsecutivePositions(todo.position, user);
   }
 }
