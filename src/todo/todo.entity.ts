@@ -42,6 +42,9 @@ export class Todo extends BaseEntity {
   )
   user: User;
 
+  @Column()
+  userId: number;
+
   toDTO(): TodoDTO {
     return {
       id: this.id,

@@ -14,10 +14,11 @@ import { ApiTags, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { TodoService } from './todo.service';
 import { TodoDTO } from './dto';
 import { CreateTodoDTO } from './dto/create-todo.dto';
-import { UpdateTodoStatusDTO } from './dto/update-todo-status.dto';
 import { GetUser } from 'src/user/decorators/get-user.decorator';
 import { User } from 'src/user/user.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { UpdateTodoPositionDTO } from './dto/update-todo-position.dto';
+import { UpdateTodoStatusDTO } from './dto/update-todo-status.dto';
 
 @ApiTags('Todo')
 @UseGuards(AuthGuard())
@@ -63,12 +64,24 @@ export class TodoController {
   @ApiBearerAuth()
   @ApiBody({ type: UpdateTodoStatusDTO })
   @ApiResponse({ status: 200, type: TodoDTO })
-  @Patch('/:id')
+  @Patch('/status/:id')
   updateStatus(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateTodoStatusDTO,
     @GetUser() user: User,
   ): Promise<TodoDTO> {
     return this.todoService.updateStatus(id, dto.status, user);
+  }
+
+  @ApiBearerAuth()
+  @ApiBody({ type: UpdateTodoPositionDTO })
+  @ApiResponse({ status: 200, type: TodoDTO })
+  @Patch('/position/:id')
+  updatePosition(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateTodoPositionDTO,
+    @GetUser() user: User,
+  ): Promise<TodoDTO> {
+    return this.todoService.updatePosition(id, dto.newPosition, user);
   }
 }

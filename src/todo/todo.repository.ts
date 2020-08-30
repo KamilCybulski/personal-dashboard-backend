@@ -17,7 +17,7 @@ export class TodoRepository extends Repository<Todo> {
           .reduce((acc, current) => (current > acc ? current : acc)) + 1;
   }
 
-  private async updateConsecutivePositions(
+  private async decreaseConsecutivePositions(
     startFrom: number,
     user: User,
   ): Promise<void> {
@@ -27,8 +27,69 @@ export class TodoRepository extends Repository<Todo> {
         position: () => 'position - 1',
       })
       .where('userId = :id', { id: user.id })
-      .where('position > :startFrom', { startFrom })
+      .andWhere('position > :startFrom', { startFrom })
       .execute();
+  }
+
+  private async changeTodoPositionUp(
+    todo: Todo,
+    newPosition: number,
+    user: User,
+  ): Promise<Todo> {
+    const prevPosition = todo.position;
+
+    // Update todo position to desired number
+    todo.position = newPosition;
+    await todo.save();
+
+    // Increase the position of items in the gap
+    await this.createQueryBuilder()
+      .update()
+      .set({
+        position: () => 'position + 1',
+      })
+      .where('userId = :userId', { userId: user.id })
+      .andWhere('id != :id', { id: todo.id })
+      .andWhere('position >= :newPosition', { newPosition })
+      .andWhere('position < :prevPosition', { prevPosition })
+      .execute();
+
+    return todo;
+  }
+
+  private async changeTodoPositionDown(
+    todo: Todo,
+    newPosition: number,
+    user: User,
+  ): Promise<Todo> {
+    const prevPosition = todo.position;
+
+    // Increase position below newPosition to create a gap
+    await this.createQueryBuilder()
+      .update()
+      .set({
+        position: () => 'position + 1',
+      })
+      .where('userId = :userId', { userId: user.id })
+      .andWhere('position > :newPosition', { newPosition })
+      .execute();
+
+    // Update items position to fill the gap
+    todo.position = newPosition;
+    await todo.save();
+
+    // Decrease the position of everything below prevPosition to remove remaining gap
+    await this.createQueryBuilder()
+      .update()
+      .set({
+        position: () => 'position - 1',
+      })
+      .where('userId = :userId', { userId: user.id })
+      .andWhere('id != :id', { id: todo.id })
+      .andWhere('position > :prevPosition', { prevPosition })
+      .execute();
+
+    return todo;
   }
 
   async createTodo(dto: CreateTodoDTO, user: User): Promise<Todo> {
@@ -47,7 +108,7 @@ export class TodoRepository extends Repository<Todo> {
   }
 
   getAllTodos(user: User): Promise<Todo[]> {
-    return this.find({ where: { user: user.id } });
+    return this.find({ where: { userId: user.id } });
   }
 
   async getTodoById(id: number, user: User): Promise<Todo> {
@@ -69,24 +130,30 @@ export class TodoRepository extends Repository<Todo> {
     status: TodoStatus,
     user: User,
   ): Promise<Todo> {
-    const todo = await this.findOne(id, { relations: ['user'] });
-
-    if (!todo) {
-      throw new NotFoundException();
-    }
-
-    if (todo.user.id !== user.id) {
-      throw new UnauthorizedException();
-    }
+    const todo = await this.getTodoById(id, user);
 
     todo.status = status;
     todo.save();
     return todo;
   }
 
+  async updateTodoPosition(
+    id: number,
+    newPosition: number,
+    user: User,
+  ): Promise<Todo> {
+    const todo = await this.getTodoById(id, user);
+
+    if (todo.position === newPosition) return;
+
+    return newPosition < todo.position
+      ? this.changeTodoPositionUp(todo, newPosition, user)
+      : this.changeTodoPositionDown(todo, newPosition, user);
+  }
+
   async deleteTodo(id: number, user: User): Promise<void> {
     const todo = await this.findOne(id);
     await this.remove([todo]);
-    await this.updateConsecutivePositions(todo.position, user);
+    await this.decreaseConsecutivePositions(todo.position, user);
   }
 }
