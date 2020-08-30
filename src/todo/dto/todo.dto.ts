@@ -19,4 +19,7 @@ export class TodoDTO {
 
   @ApiProperty()
   updatedAt: Date;
+
+  @ApiProperty()
+  position: number;
 }

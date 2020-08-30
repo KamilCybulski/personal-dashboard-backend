@@ -50,6 +50,7 @@ export class Todo extends BaseEntity {
       status: this.status,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
+      position: this.position,
     };
   }
 }
