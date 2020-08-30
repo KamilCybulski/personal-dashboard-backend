@@ -13,17 +13,22 @@ export class TodoRepository extends Repository<Todo> {
     return allTodos.length === 0
       ? 0
       : allTodos
-        .map((todo) => todo.position)
-        .reduce((acc, current) => current > acc ? current : acc) + 1;
+          .map(todo => todo.position)
+          .reduce((acc, current) => (current > acc ? current : acc)) + 1;
   }
 
-  private async updateConsecutivePositions(startFrom: number, user: User): Promise<void> {
-    await this.createQueryBuilder().update().set({
-      position: () => "position - 1",
-    })
-    .where('userId = :id', { id: user.id })
-    .where('position > :startFrom', { startFrom })
-    .execute()
+  private async updateConsecutivePositions(
+    startFrom: number,
+    user: User,
+  ): Promise<void> {
+    await this.createQueryBuilder()
+      .update()
+      .set({
+        position: () => 'position - 1',
+      })
+      .where('userId = :id', { id: user.id })
+      .where('position > :startFrom', { startFrom })
+      .execute();
   }
 
   async createTodo(dto: CreateTodoDTO, user: User): Promise<Todo> {
@@ -42,7 +47,7 @@ export class TodoRepository extends Repository<Todo> {
   }
 
   getAllTodos(user: User): Promise<Todo[]> {
-    return this.find({ where: { user: user.id } })
+    return this.find({ where: { user: user.id } });
   }
 
   async getTodoById(id: number, user: User): Promise<Todo> {

@@ -16,7 +16,7 @@ export class TodoService {
 
   async getAll(user: User): Promise<TodoDTO[]> {
     const todos = await this.todoRepository.getAllTodos(user);
-    return todos.map((todo) => todo.toDTO());
+    return todos.map(todo => todo.toDTO());
   }
 
   async getById(id: number, user: User): Promise<TodoDTO> {
@@ -30,7 +30,7 @@ export class TodoService {
   }
 
   deleteTodo(id: number, user: User): Promise<void> {
-    return this.todoRepository.deleteTodo(id, user);  
+    return this.todoRepository.deleteTodo(id, user);
   }
 
   async updateStatus(
