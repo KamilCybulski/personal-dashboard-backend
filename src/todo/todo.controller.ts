@@ -77,11 +77,12 @@ export class TodoController {
   @ApiBody({ type: UpdateTodoPositionDTO })
   @ApiResponse({ status: 200, type: TodoDTO })
   @Patch('/position/:id')
-  updatePosition(
+  async updatePosition(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateTodoPositionDTO,
     @GetUser() user: User,
-  ): Promise<TodoDTO> {
-    return this.todoService.updatePosition(id, dto.newPosition, user);
+  ): Promise<TodoDTO[]> {
+    await this.todoService.updatePosition(id, dto.newPosition, user);
+    return this.todoService.getAll(user);
   }
 }
