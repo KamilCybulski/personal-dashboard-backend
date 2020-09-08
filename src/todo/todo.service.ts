@@ -52,13 +52,12 @@ export class TodoService {
     id: number,
     newPosition: number,
     user: User,
-  ): Promise<TodoDTO> {
-    const updatedTodo = await this.todoRepository.updateTodoPosition(
+  ): Promise<void> {
+    await this.todoRepository.updateTodoPosition(
       id,
       newPosition,
       user,
     );
-    return updatedTodo.toDTO();
   }
 
   async updateResolveDate(

@@ -58,7 +58,6 @@ export class TodoController {
     @Body(ValidationPipe) body: CreateTodoDTO,
     @GetUser() user: User,
   ): Promise<TodoDTO> {
-    console.log(body);
     return this.todoService.createTodo(body, user);
   }
 
@@ -78,7 +77,7 @@ export class TodoController {
   @Patch('/status/:id')
   updateStatus(
     @Param('id', ParseIntPipe) id: number,
-    @Body() dto: UpdateTodoStatusDTO,
+    @Body(ValidationPipe) dto: UpdateTodoStatusDTO,
     @GetUser() user: User,
   ): Promise<TodoDTO> {
     return this.todoService.updateStatus(id, dto.status, user);
@@ -90,7 +89,7 @@ export class TodoController {
   @Patch('/position/:id')
   async updatePosition(
     @Param('id', ParseIntPipe) id: number,
-    @Body() dto: UpdateTodoPositionDTO,
+    @Body(ValidationPipe) dto: UpdateTodoPositionDTO,
     @GetUser() user: User,
   ): Promise<TodoDTO[]> {
     await this.todoService.updatePosition(id, dto.newPosition, user);
