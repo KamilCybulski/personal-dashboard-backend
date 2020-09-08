@@ -162,4 +162,12 @@ export class TodoRepository extends Repository<Todo> {
     await this.remove([todo]);
     await this.decreaseConsecutivePositions(todo.position, user);
   }
+
+  async updateTodoResolveDate(id: number, newDate: Date, user: User): Promise<Todo> {
+    const todo = await this.getTodoById(id, user);
+
+    todo.resolveAt = newDate;
+    await todo.save();
+    return todo;
+  }
 }

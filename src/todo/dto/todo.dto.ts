@@ -8,7 +8,7 @@ export class TodoDTO {
   @ApiProperty()
   name: string;
 
-  @ApiProperty({ nullable: true,  })
+  @ApiProperty({ nullable: true })
   notes: string | null;
 
   @ApiProperty({ enum: TodoStatus })

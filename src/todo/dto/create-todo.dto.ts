@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Length, IsOptional, IsString, IsDefined, IsDateString } from 'class-validator';
+import {
+  Length,
+  IsOptional,
+  IsString,
+  IsDefined,
+  IsDateString,
+} from 'class-validator';
 
 export class CreateTodoDTO {
   @ApiProperty({ required: true })
@@ -14,7 +20,10 @@ export class CreateTodoDTO {
   @IsOptional()
   notes?: string;
 
-  @ApiProperty({ required: false, description: 'Date string (ISO 8601 Extended Format)' })
+  @ApiProperty({
+    required: false,
+    description: 'Date string (ISO 8601 Extended Format)',
+  })
   @IsString()
   @IsDateString()
   @IsOptional()
