@@ -20,8 +20,8 @@ export class Todo extends BaseEntity {
   @Column()
   name: string;
 
-  @Column()
-  notes: string;
+  @Column({ nullable: true })
+  notes: string | null;
 
   @Column()
   status: TodoStatus;
@@ -31,6 +31,9 @@ export class Todo extends BaseEntity {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  resolveAt: Date | null;
 
   @Column()
   position: number;
@@ -53,6 +56,7 @@ export class Todo extends BaseEntity {
       status: this.status,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
+      resolveAt: this.resolveAt,
       position: this.position,
     };
   }

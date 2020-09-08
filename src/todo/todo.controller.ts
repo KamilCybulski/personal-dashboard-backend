@@ -8,6 +8,7 @@ import {
   Delete,
   Patch,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 
@@ -47,7 +48,8 @@ export class TodoController {
   @ApiBody({ type: CreateTodoDTO })
   @ApiResponse({ status: 201, type: TodoDTO })
   @Post()
-  create(@Body() body: CreateTodoDTO, @GetUser() user: User): Promise<TodoDTO> {
+  create(@Body(ValidationPipe) body: CreateTodoDTO, @GetUser() user: User): Promise<TodoDTO> {
+    console.log(body)
     return this.todoService.createTodo(body, user);
   }
 
