@@ -93,14 +93,15 @@ export class TodoRepository extends Repository<Todo> {
   }
 
   async createTodo(dto: CreateTodoDTO, user: User): Promise<Todo> {
-    const { name, notes } = dto;
+    const { name, notes, resolveAt } = dto;
     const position = await this.findNextPosition(user);
 
     const todo = new Todo();
     todo.name = name;
-    todo.notes = notes;
+    todo.notes = notes || null;
     todo.status = TodoStatus.inProgress;
     todo.position = position;
+    todo.resolveAt = resolveAt ? new Date(resolveAt) : null;
     todo.user = user;
 
     await todo.save();
@@ -160,5 +161,13 @@ export class TodoRepository extends Repository<Todo> {
 
     await this.remove([todo]);
     await this.decreaseConsecutivePositions(todo.position, user);
+  }
+
+  async updateTodoResolveDate(id: number, newDate: Date, user: User): Promise<Todo> {
+    const todo = await this.getTodoById(id, user);
+
+    todo.resolveAt = newDate;
+    await todo.save();
+    return todo;
   }
 }

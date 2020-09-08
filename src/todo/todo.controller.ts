@@ -8,8 +8,14 @@ import {
   Delete,
   Patch,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
-import { ApiTags, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiBody,
+} from '@nestjs/swagger';
 
 import { TodoService } from './todo.service';
 import { TodoDTO } from './dto';
@@ -19,6 +25,7 @@ import { User } from 'src/user/user.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { UpdateTodoPositionDTO } from './dto/update-todo-position.dto';
 import { UpdateTodoStatusDTO } from './dto/update-todo-status.dto';
+import { UpdateTodoResolveDateDTO } from './dto/update-todo-resolve-date.dto';
 
 @ApiTags('Todo')
 @UseGuards(AuthGuard())
@@ -47,7 +54,10 @@ export class TodoController {
   @ApiBody({ type: CreateTodoDTO })
   @ApiResponse({ status: 201, type: TodoDTO })
   @Post()
-  create(@Body() body: CreateTodoDTO, @GetUser() user: User): Promise<TodoDTO> {
+  create(
+    @Body(ValidationPipe) body: CreateTodoDTO,
+    @GetUser() user: User,
+  ): Promise<TodoDTO> {
     return this.todoService.createTodo(body, user);
   }
 
@@ -67,7 +77,7 @@ export class TodoController {
   @Patch('/status/:id')
   updateStatus(
     @Param('id', ParseIntPipe) id: number,
-    @Body() dto: UpdateTodoStatusDTO,
+    @Body(ValidationPipe) dto: UpdateTodoStatusDTO,
     @GetUser() user: User,
   ): Promise<TodoDTO> {
     return this.todoService.updateStatus(id, dto.status, user);
@@ -79,10 +89,22 @@ export class TodoController {
   @Patch('/position/:id')
   async updatePosition(
     @Param('id', ParseIntPipe) id: number,
-    @Body() dto: UpdateTodoPositionDTO,
+    @Body(ValidationPipe) dto: UpdateTodoPositionDTO,
     @GetUser() user: User,
   ): Promise<TodoDTO[]> {
     await this.todoService.updatePosition(id, dto.newPosition, user);
     return this.todoService.getAll(user);
+  }
+
+  @ApiBearerAuth()
+  @ApiBody({ type: UpdateTodoResolveDateDTO })
+  @ApiResponse({ status: 200, type: TodoDTO })
+  @Patch('/resolve/:id')
+  async updateResolveDate(
+    @Param('id', ParseIntPipe) id: number,
+    @Body(ValidationPipe) dto: UpdateTodoResolveDateDTO,
+    @GetUser() user: User,
+  ): Promise<TodoDTO> {
+    return this.todoService.updateResolveDate(id, dto.resolveAt, user);
   }
 }

@@ -16,7 +16,9 @@ export class TodoService {
 
   async getAll(user: User): Promise<TodoDTO[]> {
     const todos = await this.todoRepository.getAllTodos(user);
-    return todos.sort((first, second) => first.position - second.position).map(todo => todo.toDTO());
+    return todos
+      .sort((first, second) => first.position - second.position)
+      .map(todo => todo.toDTO());
   }
 
   async getById(id: number, user: User): Promise<TodoDTO> {
@@ -50,12 +52,21 @@ export class TodoService {
     id: number,
     newPosition: number,
     user: User,
-  ): Promise<TodoDTO> {
-    const updatedTodo = await this.todoRepository.updateTodoPosition(
+  ): Promise<void> {
+    await this.todoRepository.updateTodoPosition(
       id,
       newPosition,
       user,
     );
+  }
+
+  async updateResolveDate(
+    id: number,
+    newDateString: string,
+    user: User
+  ): Promise<TodoDTO> {
+    const newDate = new Date(newDateString);
+    const updatedTodo = await this.todoRepository.updateTodoResolveDate(id, newDate, user);
     return updatedTodo.toDTO();
   }
 }
